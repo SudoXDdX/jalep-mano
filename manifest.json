@@ -1,0 +1,107 @@
+{
+  "name": "JALEP Corporação — Assistência Técnica Profissional",
+  "short_name": "JALEP",
+  "description": "Assistência Técnica Profissional — Diagnóstico preciso. Reparo certeiro. Zero improviso.",
+  "start_url": "/jalep-mano/",
+  "scope": "/jalep-mano/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0E1019",
+  "theme_color": "#82B1FF",
+  "categories": [
+    "business",
+    "utilities"
+  ],
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/jalep-mano/icons/icon-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/jalep-mano/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Serviços",
+      "url": "/jalep-mano/servicos",
+      "icons": [
+        {
+          "src": "/jalep-mano/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Orçamento",
+      "url": "/jalep-mano/#budget",
+      "icons": [
+        {
+          "src": "/jalep-mano/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Lab",
+      "url": "/jalep-mano/lab",
+      "icons": [
+        {
+          "src": "/jalep-mano/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
