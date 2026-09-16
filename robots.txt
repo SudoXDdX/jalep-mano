@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Sitemap: https://suxd-dev.github.io/jalep-mano/sitemap.xml
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
