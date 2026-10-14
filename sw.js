@@ -1,5 +1,5 @@
-// JALEP Service Worker v3 — cache versioned for auto-invalidation
-const CACHE_NAME = "jalep-v3-2026-09-16";
+// JALEP Service Worker v4 — premium design layer cache invalidation
+const CACHE_NAME = "jalep-v4-premium-2026-09-16";
 const STATIC_ASSETS = [
   "/jalep-mano/",
   "/jalep-mano/index.html",
@@ -23,6 +23,8 @@ const STATIC_ASSETS = [
   "/jalep-mano/hardware.html",
   "/jalep-mano/parceiros.html",
   "/jalep-mano/depoimentos.html",
+  "/jalep-mano/assets/premium.css",
+  "/jalep-mano/assets/premium.js",
 ];
 
 self.addEventListener("install", (event) => {

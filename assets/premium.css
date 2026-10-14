@@ -1,0 +1,414 @@
+/* ============================================================
+   JALEP 2.0 — Premium Design Layer
+   Camada de design premium, vanilla CSS, zero dependências.
+   Aplicada sobre o dark mode nativo (data-mode="dark") sem
+   remover ou sobrescrever o tema existente — apenas soma.
+   Diretrizes: animação só em transform/opacity, prefers-reduced-
+   motion respeitado, transições listadas (nunca "all").
+   ============================================================ */
+
+/* ---------- Tokens premium ---------- */
+:root {
+  --premium-radius: 20px;
+  --premium-ease: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --premium-glow: color-mix(in srgb, var(--color-primary, #82b1ff) 22%, transparent);
+  --premium-glow-strong: color-mix(in srgb, var(--color-primary, #82b1ff) 34%, transparent);
+  --premium-border: rgba(255, 255, 255, 0.08);
+  --premium-border-hover: rgba(255, 255, 255, 0.16);
+  --premium-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.22),
+    0 12px 32px rgba(0, 0, 0, 0.28);
+  --premium-shadow-hover:
+    0 2px 4px rgba(0, 0, 0, 0.22),
+    0 8px 24px rgba(0, 0, 0, 0.26),
+    0 20px 48px var(--premium-glow);
+}
+
+/* Fallbacks para navegadores sem color-mix */
+@supports not (color: color-mix(in lab, red, red)) {
+  :root {
+    --premium-glow: rgba(130, 177, 255, 0.22);
+    --premium-glow-strong: rgba(130, 177, 255, 0.34);
+  }
+}
+
+/* ---------- Glassmorphism refinado ---------- */
+/* Sobre os cards existentes (glass-card, neon-card, stat-card)
+   e no utilitário .premium-card. Não remove os estilos base —
+   refina blur, borda, sombra e radius. */
+.premium-card,
+main .glass-card,
+main .neon-card,
+main .stat-card {
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--premium-border);
+  border-radius: var(--premium-radius);
+  box-shadow: var(--premium-shadow);
+  /* position:relative necessário para o glow ::after do topo */
+  position: relative;
+  /* transform é animável com GPU; transições listadas */
+  transition:
+    transform 0.2s var(--premium-ease),
+    box-shadow 0.2s var(--premium-ease),
+    border-color 0.2s var(--premium-ease),
+    opacity 0.2s var(--premium-ease);
+}
+
+/* Melhor perceptível: glassmorphism mais profundo em cards-chip pequenos */
+/* Os chips em linha (badges) usam .glass-card com utilitário inline-flex:
+   raio/sombra menores mantêm a proporção elegante. */
+main .glass-card.inline-flex {
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+main .glass-card.inline-flex::after {
+  display: none;
+}
+
+/* Desativar blur pesado quando o usuário pedir baixa performance */
+[data-perf="low"] .premium-card,
+[data-perf="low"] main .glass-card,
+[data-perf="low"] main .neon-card,
+[data-perf="low"] main .stat-card {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ---------- Hover premium em cards ---------- */
+.premium-card:hover,
+main .glass-card:hover,
+main .neon-card:hover,
+main .stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--premium-border-hover);
+  box-shadow: var(--premium-shadow-hover);
+}
+
+/* Sem hover-elevação em telas touch (evita stuck-hover) */
+@media (hover: none) {
+  .premium-card:hover,
+  main .glass-card:hover,
+  main .neon-card:hover,
+  main .stat-card:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Brilho no topo dos cards (detalhe premium) ---------- */
+.premium-card::after,
+main .glass-card::after,
+main .neon-card::after,
+main .stat-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-primary, #82b1ff) 55%, transparent),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--premium-ease);
+}
+
+.premium-card:hover::after,
+main .glass-card:hover::after,
+main .neon-card:hover::after,
+main .stat-card:hover::after {
+  opacity: 1;
+}
+
+@supports not (color: color-mix(in lab, red, red)) {
+  .premium-card::after,
+  main .glass-card::after,
+  main .neon-card::after,
+  main .stat-card::after {
+    background: linear-gradient(90deg, transparent, rgba(130, 177, 255, 0.55), transparent);
+  }
+}
+
+/* ---------- Gradiente animado de fundo (body) ---------- */
+/* Pseudo-elemento fixo — não altera o background-color do body,
+   apenas soma um brilho radial suave com movimento lento. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background:
+    radial-gradient(38% 42% at 18% 12%, color-mix(in srgb, var(--color-primary, #82b1ff) 13%, transparent), transparent 70%),
+    radial-gradient(34% 38% at 85% 20%, color-mix(in srgb, var(--color-accent, #82b1ff) 10%, transparent), transparent 70%),
+    radial-gradient(42% 46% at 78% 88%, color-mix(in srgb, var(--color-primary, #82b1ff) 8%, transparent), transparent 72%),
+    radial-gradient(30% 34% at 12% 84%, color-mix(in srgb, var(--color-accent, #82b1ff) 7%, transparent), transparent 70%);
+  animation: premium-bg-drift 46s var(--premium-ease) infinite alternate;
+}
+
+@keyframes premium-bg-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(-2.5%, 1.5%, 0) scale(1.06); }
+  100% { transform: translate3d(2%, -2%, 0) scale(1.02); }
+}
+
+/* ---------- Shine sweep no botão primário ---------- */
+/* Alvo: CTA semântico real do site (.btn-primary) + utilitário
+   .premium-shine. Tailwind arbitrary-values (bg-[var(--color-primary)])
+   também casam, para páginas com marcação utilitária pura. */
+main .btn-primary,
+main a[class*="bg-primary"],
+main button[class*="bg-primary"],
+main a[class*="bg-accent"],
+main button[class*="bg-accent"],
+.premium-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+main .btn-primary::before,
+main a[class*="bg-primary"]::before,
+main button[class*="bg-primary"]::before,
+main a[class*="bg-accent"]::before,
+main button[class*="bg-accent"]::before,
+.premium-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 60%;
+  z-index: 1;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  transform: translateX(-140%) skewX(-12deg);
+  transition: transform 0.55s var(--premium-ease);
+  pointer-events: none;
+}
+
+main .btn-primary:hover::before,
+main a[class*="bg-primary"]:hover::before,
+main button[class*="bg-primary"]:hover::before,
+main a[class*="bg-accent"]:hover::before,
+main button[class*="bg-accent"]:hover::before,
+.premium-shine:hover::before {
+  transform: translateX(260%) skewX(-12deg);
+}
+
+/* ---------- Scrollbar customizada ---------- */
+/* WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-primary, #82b1ff) 30%, var(--color-surface, #181d32));
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-primary, #82b1ff) 50%, var(--color-surface, #181d32));
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary, #82b1ff) 38%, var(--color-surface, #181d32)) transparent;
+}
+
+/* ---------- Seleção de texto ---------- */
+::selection {
+  background: color-mix(in srgb, var(--color-primary, #82b1ff) 30%, transparent);
+  color: var(--color-text, #e8ecf6);
+  text-shadow: none;
+}
+
+@supports not (color: color-mix(in lab, red, red)) {
+  ::selection {
+    background: rgba(130, 177, 255, 0.3);
+  }
+}
+
+/* ---------- Focus-visible ring global ---------- */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+label:focus-visible {
+  outline: 2px solid var(--color-primary, #82b1ff);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Remove o outline de mouse-click mantendo focus-visible */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---------- Reveal-on-scroll ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.5s var(--premium-ease),
+    transform 0.5s var(--premium-ease);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Tipografia ---------- */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+h4, h5, h6 {
+  text-wrap: pretty;
+}
+
+/* Números tabulares em listas/dados */
+main table,
+main .stat-card,
+main .font-mono,
+time,
+[class*="tabular-nums"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Números tabulares em dados do site (preços, stats, código, badges) */
+main .chip,
+main code,
+main pre,
+main [class*="price"],
+main [class*="stat"],
+main [class*="version"],
+main [class*="uptime"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Skeleton shimmer para imagens ---------- */
+main img:not([data-no-skeleton]) {
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: premium-skeleton 1.6s linear infinite;
+}
+
+main img:not([data-no-skeleton]).premium-loaded {
+  background-image: none;
+  animation: none;
+}
+
+@keyframes premium-skeleton {
+  from { background-position: 180% 0; }
+  to   { background-position: -80% 0; }
+}
+
+/* ---------- Light mode (data-mode="light", quando existir) ---------- */
+html:not([data-mode="dark"]) {
+  --premium-border: rgba(15, 23, 42, 0.10);
+  --premium-border-hover: rgba(15, 23, 42, 0.18);
+  --premium-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 4px 12px rgba(15, 15, 26, 0.08),
+    0 12px 32px rgba(15, 23, 42, 0.10);
+  --premium-shadow-hover:
+    0 2px 4px rgba(15, 23, 42, 0.08),
+    0 8px 24px rgba(15, 23, 42, 0.10),
+    0 20px 48px rgba(130, 177, 255, 0.18);
+}
+
+html:not([data-mode="dark"]) body::before {
+  opacity: 0.32;
+  background:
+    radial-gradient(38% 42% at 18% 12%, color-mix(in srgb, var(--color-primary, #2563eb) 10%, transparent), transparent 70%),
+    radial-gradient(34% 38% at 85% 20%, color-mix(in srgb, var(--color-accent, #2563eb) 8%, transparent), transparent 70%);
+}
+
+/* ---------- Redução de movimento (accessibility) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  body::before {
+    animation: none;
+    opacity: 0.35;
+  }
+
+  main .btn-primary::before,
+  main a[class*="bg-primary"]::before,
+  main button[class*="bg-primary"]::before,
+  main a[class*="bg-accent"]::before,
+  main button[class*="bg-accent"]::before,
+  .premium-shine::before {
+    display: none;
+  }
+
+  main img:not([data-no-skeleton]) {
+    animation: none;
+  }
+}
+
+/* ---------- Touch & interação ---------- */
+a,
+button,
+[role="button"],
+input,
+textarea,
+select,
+summary {
+  touch-action: manipulation;
+}
+
+/* Modais/drawers existentes: conter overscroll */
+[role="dialog"],
+dialog {
+  overscroll-behavior: contain;
+}
+
+/* ---------- Notas de descoberta ---------- */
+/* Este arquivo carrega após o Tailwind compilado (link no head),
+   então regras com igual especificidade ganham — por isso usamos
+   seletores escopados em main/elementos premium, sem !important,
+   exceto onde a diretriz exige (reduced-motion). */
