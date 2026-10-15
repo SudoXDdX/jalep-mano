@@ -1,5 +1,5 @@
 /* ============================================================
-   JALEP 2.0 — Premium Design Layer (runtime)
+   JALEP 3.0 — Premium Design Layer (runtime)
    Vanilla JS, defer-safe, sem dependências.
    - Reveal-on-scroll via IntersectionObserver (threshold .12)
    - Auto-marca filhos de main com .reveal (seletor seguro;
@@ -9,12 +9,14 @@
    - Toast aria-live=polite em falhas de rede de formulários
      (não intercepta nem altera o comportamento dos forms)
    - prefers-reduced-motion: pula TUDO de animação de entrada
+   - Reveals com stagger 40ms por lote (--reveal-index, premium.css)
    - data-perf="low": pula auto-reveal (preferência do usuário)
    ============================================================ */
 (function () {
   "use strict";
 
   var doc = document;
+  /* prefers-reduced-motion: checado 1x e cacheado (motion tokens 3.0) */
   var reducedMotion = false;
   try {
     reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -79,7 +81,11 @@
     return marked;
   }
 
-  /* ---------- Observer ---------- */
+  /* ---------- Observer (3.0: stagger 40ms por lote) ---------- */
+  /* Entradas do mesmo callback = mesmo lote visual (grid/lista que
+     entra junto). O primeiro item revela já, o k-ésimo espera
+     k × 40ms via --reveal-index (consumido pelo premium.css).
+     Lotes posteriores recomeçam em zero. */
   function revealAllInstantly() {
     var all = doc.querySelectorAll(".reveal");
     for (var i = 0; i < all.length; i++) {
@@ -95,11 +101,16 @@
 
     var io = new IntersectionObserver(
       function (entries) {
+        var batchIndex = 0;
         for (var k = 0; k < entries.length; k++) {
           var entry = entries[k];
           if (entry.isIntersecting) {
+            if (batchIndex > 0) {
+              entry.target.style.setProperty("--reveal-index", String(batchIndex));
+            }
             entry.target.classList.add("in");
             io.unobserve(entry.target);
+            batchIndex++;
           }
         }
       },
@@ -149,21 +160,23 @@
           "font:500 .875rem/1.4 var(--font-sans, system-ui, sans-serif);" +
           "padding:.75rem 1.25rem;box-shadow:0 8px 24px rgba(0,0,0,.4);" +
           "max-width:min(24rem, 90vw);opacity:0;transform:translateY(8px);" +
-          "transition:opacity .25s cubic-bezier(.05,.7,.1,1), transform .25s cubic-bezier(.05,.7,.1,1);"
+          "transition:opacity var(--duration-fast, .25s) var(--ease-smooth-out, cubic-bezier(0.22,1,0.36,1))," +
+          "transform var(--duration-fast, .25s) var(--ease-smooth-out, cubic-bezier(0.22,1,0.36,1));"
       );
       region.appendChild(toast);
-      /* entra */
+      /* entra (fast = open) */
       requestAnimationFrame(function () {
         toast.style.opacity = "1";
         toast.style.transform = "translateY(0)";
       });
-      /* sai */
+      /* sai (medium = toast close 350ms) */
       window.setTimeout(function () {
+        toast.style.transitionDuration = "var(--duration-medium, .35s)";
         toast.style.opacity = "0";
         toast.style.transform = "translateY(8px)";
         window.setTimeout(function () {
           if (toast.parentNode) toast.parentNode.removeChild(toast);
-        }, 300);
+        }, 400);
       }, 4200);
     } catch (e) { /* toast é progressive enhancement: falha silenciosa */ }
   }

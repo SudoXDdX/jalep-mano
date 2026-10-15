@@ -1,5 +1,5 @@
-// JALEP Service Worker v4 — premium design layer cache invalidation
-const CACHE_NAME = "jalep-v4-premium-2026-09-16";
+// JALEP Service Worker v5 — upgrade3: premium layer nas páginas restantes
+const CACHE_NAME = "jalep-v5-upgrade3-2026-10-15";
 const STATIC_ASSETS = [
   "/jalep-mano/",
   "/jalep-mano/index.html",

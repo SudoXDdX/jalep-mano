@@ -1,20 +1,47 @@
 /* ============================================================
-   JALEP 2.0 — Premium Design Layer
+   JALEP 3.0 — Premium Design Layer
    Camada de design premium, vanilla CSS, zero dependências.
    Aplicada sobre o dark mode nativo (data-mode="dark") sem
    remover ou sobrescrever o tema existente — apenas soma.
-   Diretrizes: animação só em transform/opacity, prefers-reduced-
-   motion respeitado, transições listadas (nunca "all").
+   Diretrizes: animação só em transform/opacity/blur/filter,
+   prefers-reduced-motion respeitado (bloco único no final),
+   transições listadas (nunca "all"), open/close assimétricos,
+   hover-in mais rápido que hover-out, stagger 40ms em listas.
    ============================================================ */
 
-/* ---------- Tokens premium ---------- */
+/* ---------- Motion tokens (JALEP 3.0) ---------- */
+/* Durations por uso — não "o número mais próximo". */
 :root {
+  --duration-stagger: 40ms;   /* delay incremental entre itens de lote */
+  --duration-micro: 80ms;      /* micro-feedback, hover-out de ícone */
+  --duration-quick: 150ms;     /* close de modal/dropdown, tooltip appear */
+  --duration-fast: 250ms;      /* open de dropdown/modal, icon swap, page slide */
+  --duration-medium: 350ms;    /* close de panel/toast */
+  --duration-slow: 400ms;      /* open de panel/drawer, skeleton */
+  --duration-very-slow: 500ms; /* badge appear, text reveal */
+
+  /* Easings */
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1); /* DEFAULT open/close/slide/resize */
+  --ease-icon-swap: ease-in-out;   /* icon/text swap */
+  --ease-shimmer: linear;         /* shimmer/spinner */
+
+  /* Distâncias (nada acima de ~40px fora panel/drawer) */
+  --distance-text-swap: 4px;
+  --distance-page-slide: 8px;
+  --distance-text-reveal: 12px;
+  --distance-badge-appear: 30px;
+
+  /* Alias de compatibilidade: páginas HTML usam
+     var(--premium-ease, ease) inline — continua funcionando,
+     agora alinhado ao default 3.0. */
+  --premium-ease: var(--ease-smooth-out);
+
   --premium-radius: 20px;
-  --premium-ease: cubic-bezier(0.05, 0.7, 0.1, 1);
   --premium-glow: color-mix(in srgb, var(--color-primary, #82b1ff) 22%, transparent);
   --premium-glow-strong: color-mix(in srgb, var(--color-primary, #82b1ff) 34%, transparent);
   --premium-border: rgba(255, 255, 255, 0.08);
   --premium-border-hover: rgba(255, 255, 255, 0.16);
+  /* Glass 3.0: profundidade em 3 layers (ambient + mid + key) */
   --premium-shadow:
     0 1px 2px rgba(0, 0, 0, 0.25),
     0 4px 12px rgba(0, 0, 0, 0.22),
@@ -36,7 +63,9 @@
 /* ---------- Glassmorphism refinado ---------- */
 /* Sobre os cards existentes (glass-card, neon-card, stat-card)
    e no utilitário .premium-card. Não remove os estilos base —
-   refina blur, borda, sombra e radius. */
+   refina blur, borda, sombra e radius.
+   Hover-in fast (250ms) > hover-out slow (400ms): entrada
+   responsiva, retorno suave. Só propriedades animáveis. */
 .premium-card,
 main .glass-card,
 main .neon-card,
@@ -48,12 +77,18 @@ main .stat-card {
   box-shadow: var(--premium-shadow);
   /* position:relative necessário para o glow ::after do topo */
   position: relative;
-  /* transform é animável com GPU; transições listadas */
   transition:
-    transform 0.2s var(--premium-ease),
-    box-shadow 0.2s var(--premium-ease),
-    border-color 0.2s var(--premium-ease),
-    opacity 0.2s var(--premium-ease);
+    transform var(--duration-slow) var(--ease-smooth-out),
+    box-shadow var(--duration-slow) var(--ease-smooth-out),
+    border-color var(--duration-slow) var(--ease-smooth-out),
+    opacity var(--duration-slow) var(--ease-smooth-out);
+}
+
+.premium-card:hover,
+main .glass-card:hover,
+main .neon-card:hover,
+main .stat-card:hover {
+  transition-duration: var(--duration-fast);
 }
 
 /* Melhor perceptível: glassmorphism mais profundo em cards-chip pequenos */
@@ -98,6 +133,7 @@ main .stat-card:hover {
 }
 
 /* ---------- Brilho no topo dos cards (detalhe premium) ---------- */
+/* Aparecer acompanha o hover-in fast; sumir, o hover-out slow. */
 .premium-card::after,
 main .glass-card::after,
 main .neon-card::after,
@@ -114,7 +150,7 @@ main .stat-card::after {
   );
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s var(--premium-ease);
+  transition: opacity var(--duration-slow) var(--ease-smooth-out);
 }
 
 .premium-card:hover::after,
@@ -122,6 +158,7 @@ main .glass-card:hover::after,
 main .neon-card:hover::after,
 main .stat-card:hover::after {
   opacity: 1;
+  transition-duration: var(--duration-fast);
 }
 
 @supports not (color: color-mix(in lab, red, red)) {
@@ -148,7 +185,7 @@ body::before {
     radial-gradient(34% 38% at 85% 20%, color-mix(in srgb, var(--color-accent, #82b1ff) 10%, transparent), transparent 70%),
     radial-gradient(42% 46% at 78% 88%, color-mix(in srgb, var(--color-primary, #82b1ff) 8%, transparent), transparent 72%),
     radial-gradient(30% 34% at 12% 84%, color-mix(in srgb, var(--color-accent, #82b1ff) 7%, transparent), transparent 70%);
-  animation: premium-bg-drift 46s var(--premium-ease) infinite alternate;
+  animation: premium-bg-drift 46s var(--ease-smooth-out) infinite alternate;
 }
 
 @keyframes premium-bg-drift {
@@ -160,7 +197,8 @@ body::before {
 /* ---------- Shine sweep no botão primário ---------- */
 /* Alvo: CTA semântico real do site (.btn-primary) + utilitário
    .premium-shine. Tailwind arbitrary-values (bg-[var(--color-primary)])
-   também casam, para páginas com marcação utilitária pura. */
+   também casam, para páginas com marcação utilitária pura.
+   Sweep 3.0: hover-in fast (250ms), retorno slow (400ms). */
 main .btn-primary,
 main a[class*="bg-primary"],
 main button[class*="bg-primary"],
@@ -190,7 +228,7 @@ main button[class*="bg-accent"]::before,
     transparent 100%
   );
   transform: translateX(-140%) skewX(-12deg);
-  transition: transform 0.55s var(--premium-ease);
+  transition: transform var(--duration-slow) var(--ease-smooth-out);
   pointer-events: none;
 }
 
@@ -201,6 +239,7 @@ main a[class*="bg-accent"]:hover::before,
 main button[class*="bg-accent"]:hover::before,
 .premium-shine:hover::before {
   transform: translateX(260%) skewX(-12deg);
+  transition-duration: var(--duration-fast);
 }
 
 /* ---------- Scrollbar customizada ---------- */
@@ -249,14 +288,16 @@ html {
   }
 }
 
-/* ---------- Focus-visible ring global ---------- */
+/* ---------- Focus-visible ring global (padrão único) ---------- */
+/* 2px primary, offset 2px — em TODO elemento interativo,
+   inclusive [tabindex] sem role. Mouse-click não mostra ring. */
 a:focus-visible,
 button:focus-visible,
-[role="button"]:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 summary:focus-visible,
+[role="button"]:focus-visible,
 [tabindex]:focus-visible,
 label:focus-visible {
   outline: 2px solid var(--color-primary, #82b1ff);
@@ -264,23 +305,28 @@ label:focus-visible {
   border-radius: 6px;
 }
 
-/* Remove o outline de mouse-click mantendo focus-visible */
 :focus:not(:focus-visible) {
   outline: none;
 }
 
-/* ---------- Reveal-on-scroll ---------- */
+/* ---------- Reveal-on-scroll (3.0: very-slow 500ms, 12px) ---------- */
 .reveal {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(var(--distance-text-reveal));
   transition:
-    opacity 0.5s var(--premium-ease),
-    transform 0.5s var(--premium-ease);
+    opacity var(--duration-very-slow) var(--ease-smooth-out),
+    transform var(--duration-very-slow) var(--ease-smooth-out);
 }
 
 .reveal.in {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Stagger 40ms em grids/listas de cards que revelam juntos:
+   o premium.js atribui --reveal-index por lote do observer. */
+.reveal.in[style*="--reveal-index"] {
+  transition-delay: calc(var(--reveal-index) * var(--duration-stagger));
 }
 
 /* ---------- Tipografia ---------- */
@@ -322,7 +368,7 @@ main img:not([data-no-skeleton]) {
   );
   background-size: 220% 100%;
   background-repeat: no-repeat;
-  animation: premium-skeleton 1.6s linear infinite;
+  animation: premium-skeleton 1.6s var(--ease-shimmer) infinite;
 }
 
 main img:not([data-no-skeleton]).premium-loaded {
@@ -356,7 +402,24 @@ html:not([data-mode="dark"]) body::before {
     radial-gradient(34% 38% at 85% 20%, color-mix(in srgb, var(--color-accent, #2563eb) 8%, transparent), transparent 70%);
 }
 
-/* ---------- Redução de movimento (accessibility) ---------- */
+/* ---------- Touch & interação ---------- */
+a,
+button,
+[role="button"],
+input,
+textarea,
+select,
+summary {
+  touch-action: manipulation;
+}
+
+/* Modais/drawers existentes: conter overscroll */
+[role="dialog"],
+dialog {
+  overscroll-behavior: contain;
+}
+
+/* ---------- Redução de movimento (bloco único, TUDO off) ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -364,6 +427,7 @@ html:not([data-mode="dark"]) body::before {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
 
   .reveal {
@@ -388,23 +452,6 @@ html:not([data-mode="dark"]) body::before {
   main img:not([data-no-skeleton]) {
     animation: none;
   }
-}
-
-/* ---------- Touch & interação ---------- */
-a,
-button,
-[role="button"],
-input,
-textarea,
-select,
-summary {
-  touch-action: manipulation;
-}
-
-/* Modais/drawers existentes: conter overscroll */
-[role="dialog"],
-dialog {
-  overscroll-behavior: contain;
 }
 
 /* ---------- Notas de descoberta ---------- */
