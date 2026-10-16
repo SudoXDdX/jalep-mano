@@ -1,5 +1,5 @@
 // JALEP Service Worker v5 — upgrade3: premium layer nas páginas restantes
-const CACHE_NAME = "jalep-v5-upgrade3-2026-10-15";
+const CACHE_NAME = "jalep-v6-glass31-2026-10-16";
 const STATIC_ASSETS = [
   "/jalep-mano/",
   "/jalep-mano/index.html",
