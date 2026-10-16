@@ -516,3 +516,12 @@ main ~ * .wallpaper-grid,
                     linear-gradient(90deg, rgba(232, 236, 246, 0.07) 1px, transparent 1px);
   opacity: 0.55;
 }
+
+
+/* JALEP 3.2: grid sobrevive ao data-perf=mid — alimenta o backdrop-blur dos cards */
+[data-perf="mid"] .wallpaper-grid {
+  display: block !important;
+  background-image: linear-gradient(rgba(232, 236, 246, 0.07) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(232, 236, 246, 0.07) 1px, transparent 1px);
+  opacity: 0.55;
+}

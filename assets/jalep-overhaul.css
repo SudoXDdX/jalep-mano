@@ -1,0 +1,93 @@
+/* JALEP Mano: additive accessibility, polish and responsive layer. */
+:root {
+  --jalep-ink: #f4f6fb;
+  --jalep-muted: #a6adbd;
+  --jalep-line: color-mix(in srgb, var(--color-border, #ffffff) 72%, transparent);
+  --jalep-surface: color-mix(in srgb, var(--color-bg, #111318) 88%, #1c2433);
+  --jalep-accent: var(--color-primary, #8ab4ff);
+  --jalep-ease: cubic-bezier(.2,.75,.25,1);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+body { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+::selection { background: color-mix(in srgb, var(--jalep-accent) 32%, transparent); color: var(--jalep-ink); }
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--jalep-accent) !important;
+  outline-offset: 3px !important;
+}
+a { text-underline-offset: .2em; }
+main { min-width: 0; }
+main :where(p, li) { line-height: 1.72; }
+main :where(h1, h2, h3) { text-wrap: balance; letter-spacing: -.025em; }
+main :where(img, video, canvas, svg) { max-width: 100%; }
+main img { height: auto; }
+:where(button, .btn-primary, .btn-secondary, a[class*="rounded"]) {
+  -webkit-tap-highlight-color: transparent;
+}
+:where(button, .btn-primary, .btn-secondary) {
+  touch-action: manipulation;
+}
+.nav-glass {
+  border-bottom: 1px solid var(--jalep-line);
+  box-shadow: 0 8px 28px rgb(0 0 0 / .08);
+}
+.nav-glass-inner { gap: clamp(.5rem, 1.2vw, 1.25rem); }
+.nav-link { transition: color .18s var(--jalep-ease), background-color .18s var(--jalep-ease); }
+.nav-link:focus-visible { border-radius: .65rem; }
+main :where(.glass-card, .neon-card, .stat-card, .premium-card, .card) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+main :where(.glass-card, .neon-card, .stat-card, .premium-card, .card) :where(a, button) {
+  position: relative;
+}
+main :where(input, textarea, select) {
+  max-width: 100%;
+  color-scheme: dark;
+}
+main :where(input, textarea, select):focus-visible {
+  border-color: var(--jalep-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--jalep-accent) 18%, transparent);
+}
+#jalep-skip-link {
+  position: fixed; top: .75rem; left: .75rem; z-index: 100000;
+  transform: translateY(-180%); padding: .8rem 1rem; border-radius: .8rem;
+  color: #08101e; background: var(--jalep-accent); font-weight: 750;
+  box-shadow: 0 8px 28px rgb(0 0 0 / .3);
+}
+#jalep-skip-link:focus { transform: translateY(0); }
+#jalep-reading-progress {
+  position: fixed; inset: 0 auto auto 0; z-index: 100001; width: 0; height: 3px;
+  background: linear-gradient(90deg, var(--jalep-accent), #b9a2ff, #7cf2d0);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--jalep-accent) 45%, transparent);
+  pointer-events: none; transform-origin: left;
+}
+#jalep-back-top {
+  position: fixed; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 10000; width: 2.9rem; height: 2.9rem; display: grid; place-items: center;
+  border: 1px solid var(--jalep-line); border-radius: 999px;
+  color: var(--jalep-ink); background: var(--jalep-surface);
+  box-shadow: 0 8px 28px rgb(0 0 0 / .22); backdrop-filter: blur(16px);
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity .2s var(--jalep-ease), transform .2s var(--jalep-ease), visibility .2s;
+}
+#jalep-back-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+#jalep-back-top:hover { border-color: var(--jalep-accent); }
+@media (max-width: 760px) {
+  html { scroll-padding-top: 5rem; }
+  main { padding-inline: clamp(1rem, 4vw, 1.5rem) !important; }
+  main :where(.grid) { min-width: 0; }
+  .nav-mobile-panel { max-height: min(78dvh, 42rem); overflow: auto; overscroll-behavior: contain; }
+  #jalep-back-top { width: 2.65rem; height: 2.65rem; }
+}
+@media (hover: hover) and (pointer: fine) {
+  main :where(.glass-card, .neon-card, .stat-card, .premium-card, .card) {
+    transition: border-color .2s var(--jalep-ease), box-shadow .2s var(--jalep-ease);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}
