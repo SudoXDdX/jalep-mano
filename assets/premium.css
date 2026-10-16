@@ -73,10 +73,10 @@ main .stat-card {
   /* JALEP 3.1: glass TRANSLÚCIDO — o background opaco dos cards base é
      substituído por um véu rgba 62%, deixando o gradiente ambiente do
      body::before aparecer borrado através do card (glassmorphism real). */
-  background: rgba(24, 29, 50, 0.62) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(1.5);
-  backdrop-filter: blur(20px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: transparent !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--premium-radius);
   box-shadow: var(--premium-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   /* position:relative necessário para o glow ::after do topo */
@@ -93,8 +93,8 @@ main .stat-card {
 main .glass-card:hover,
 main .neon-card:hover,
 main .stat-card:hover {
-  background: rgba(24, 29, 50, 0.74) !important;
-  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(24, 29, 50, 0.24) !important;
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .premium-card:hover,
@@ -410,18 +410,21 @@ html:not([data-mode="dark"]) {
     0 20px 48px rgba(130, 177, 255, 0.18);
 }
 
-/* JALEP 3.1: no light mode o véu do glass é claro */
+/* JALEP 3.2: no light mode os cards também são 100% transparentes
+   (borda mais escura segura o contorno sem véu) */
 html:not([data-mode="dark"]) .premium-card,
 html:not([data-mode="dark"]) main .glass-card,
 html:not([data-mode="dark"]) main .neon-card,
 html:not([data-mode="dark"]) main .stat-card {
-  background: var(--premium-glass-veil) !important;
+  background: transparent !important;
+  border-color: rgba(15, 23, 42, 0.16);
 }
 html:not([data-mode="dark"]) .premium-card:hover,
 html:not([data-mode="dark"]) main .glass-card:hover,
 html:not([data-mode="dark"]) main .neon-card:hover,
 html:not([data-mode="dark"]) main .stat-card:hover {
-  background: var(--premium-glass-veil-hover) !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  border-color: rgba(15, 23, 42, 0.24);
 }
 
 html:not([data-mode="dark"]) body::before {
@@ -488,3 +491,28 @@ dialog {
    então regras com igual especificidade ganham — por isso usamos
    seletores escopados em main/elementos premium, sem !important,
    exceto onde a diretriz exige (reduced-motion). */
+
+
+/* ---------- JALEP 3.2: Navbar glass — blur sempre visível ---------- */
+/* A nav-glass base tem blur(24px) mas o estado .scrolled cobre com fundo
+   92% opaco (invisível o blur). Aqui: véu 52% translúcido ao rolar. */
+.nav-glass {
+  -webkit-backdrop-filter: blur(24px) saturate(1.8) !important;
+  backdrop-filter: blur(24px) saturate(1.8) !important;
+}
+.nav-glass.scrolled {
+  background: rgba(14, 16, 25, 0.52) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+html:not([data-mode="dark"]) .nav-glass.scrolled {
+  background: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* JALEP 3.2: grid do wallpaper mais presente — blur precisa de conteúdo
+   estruturado atrás dos cards pra ser visível */
+main ~ * .wallpaper-grid,
+.wallpaper-grid {
+  background-image: linear-gradient(rgba(232, 236, 246, 0.07) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(232, 236, 246, 0.07) 1px, transparent 1px);
+  opacity: 0.55;
+}
